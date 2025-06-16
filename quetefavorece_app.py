@@ -32,8 +32,12 @@ if st.session_state.step == 0:
         else:
             st.error("Tenés que completar ambos campos para continuar.")
 
-# Paso 1: Pregunta altura
+# Paso 1: Introducción personalizada y pregunta altura
 elif st.session_state.step == 1:
+    st.markdown(f"### 👋 Hola {st.session_state.nombre}!")
+    st.write("Por favor respondé las próximas preguntas para que podamos darte la mejor recomendación de outfit en base a tu cuerpo.")
+    st.markdown("---")
+
     st.subheader("1) Altura")
     altura = st.radio("¿Cuál es tu estatura?", ["A) Menos de 1,58 m", "B) Entre 1,58 m y 1,68 m", "C) Más de 1,68 m"])
     if st.button("Confirmar altura"):
@@ -103,6 +107,10 @@ elif st.session_state.step == 4:
 elif st.session_state.step == 5:
     st.success(f"Tu puntaje total es: {st.session_state.contador}")
     st.markdown("---")
+    st.markdown("### 💬 Comentarios sobre cada respuesta")
+    st.text("\n".join(st.session_state.comentarios))
+
+    st.markdown("---")
     st.markdown("### Recomendación final de Chuda 😘")
     rutas = {200: "cuerpo_reloj.txt", 150: "cuerpo_pera.txt", 100: "cuerpo_rectangulo.txt", 50: "cuerpo_triángulo.txt"}
     reco = rutas.get(st.session_state.contador)
@@ -117,9 +125,4 @@ elif st.session_state.step == 5:
     with open(nombre_archivo, "a", encoding="utf-8") as f:
         for c in st.session_state.comentarios:
             f.write(c + "\n")
-
-    st.markdown("---")
-    st.markdown("### 💬 Comentarios sobre cada respuesta")
-    st.text("\n".join(st.session_state.comentarios))
-
 
