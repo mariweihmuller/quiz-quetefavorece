@@ -34,7 +34,7 @@ if st.session_state.step == 0:
 
 # Paso 1: Introducción personalizada y pregunta altura
 elif st.session_state.step == 1:
-    st.markdown(f"### 👋 Hola {st.session_state.nombre}!")
+    st.markdown(f"### 👋 Hola {st.session_state.nombre} 💓!")
     st.write("Por favor respondé las próximas preguntas para que podamos darte la mejor recomendación de outfit en base a tu cuerpo.")
     st.markdown("---")
 
