@@ -5,16 +5,14 @@ st.set_page_config(page_title="¿Qué te favorece?", page_icon="👗")
 st.title("👋 ¡Bienvenida a -Qué te favorece-!")
 
 # Inicializar variables de sesión
-if "step" not in st.session_state:
-    st.session_state.step = 0
-if "nombre" not in st.session_state:
-    st.session_state.nombre = ""
-if "dni" not in st.session_state:
-    st.session_state.dni = ""
-if "comentarios" not in st.session_state:
-    st.session_state.comentarios = []
-if "contador" not in st.session_state:
-    st.session_state.contador = 0
+def init_state():
+    st.session_state.setdefault("step", 0)
+    st.session_state.setdefault("nombre", "")
+    st.session_state.setdefault("dni", "")
+    st.session_state.setdefault("comentarios", [])
+    st.session_state.setdefault("contador", 0)
+
+init_state()
 
 # Paso 0: Bienvenida y registro
 if st.session_state.step == 0:
@@ -44,7 +42,7 @@ elif st.session_state.step == 1:
             "B": ("Tu altura es media", "1. No sos bajo, sos promedio... pero meh."),
             "C": ("Tu altura es alta", "1. Sos muy alta, pareces una jirafa.")
         }
-        titulo, comentario = mapping[altura[0]]
+        titulo, comentario = mapping.get(altura[0], ("Respuesta inválida", "1. Respuesta inválida."))
         st.info(titulo)
         st.session_state.comentarios.append(comentario)
         st.session_state.step = 2
@@ -59,12 +57,12 @@ elif st.session_state.step == 2:
             "B": ("Tu peso es normalito...", "2. Tu peso es normalito..."),
             "C": ("Sos media grandota.", "2. Sos media grandota.")
         }
-        titulo, comentario = mapping[peso[0]]
+        titulo, comentario = mapping.get(peso[0], ("Respuesta inválida", "2. Respuesta inválida."))
         st.info(titulo)
         st.session_state.comentarios.append(comentario)
         st.session_state.step = 3
 
-# Paso 3: Pregunta tipo de cuerpo
+# Paso 3: Tipo de cuerpo
 elif st.session_state.step == 3:
     st.subheader("3) Tipo de cuerpo")
     cuerpo = st.radio("¿Qué forma se parece más a tu tipo de cuerpo?", [
@@ -80,13 +78,13 @@ elif st.session_state.step == 3:
             "C": ("Tenés cuerpo tipo rectángulo", "3. Al cuerpo rectángulo, tu tipo de cuerpo, le falta un poquito de forma.", 100),
             "D": ("Tenés cuerpo de pera", "3. Al cuerpo pera, tu tipo de cuerpo, le sobra cadera para tus hombritos.", 150)
         }
-        titulo, comentario, puntos = mapping[cuerpo[0]]
+        titulo, comentario, puntos = mapping.get(cuerpo[0], ("Respuesta inválida", "3. Respuesta inválida.", 0))
         st.info(titulo)
         st.session_state.comentarios.append(comentario)
         st.session_state.contador += puntos
         st.session_state.step = 4
 
-# Paso 4: Pregunta tono de piel
+# Paso 4: Tono de piel
 elif st.session_state.step == 4:
     st.subheader("4) Tono de piel")
     piel = st.radio("¿Cuál es tu tono de piel?", ["A) Piel clara", "B) Piel intermedia", "C) Piel morena/oscura"])
@@ -96,7 +94,7 @@ elif st.session_state.step == 4:
             "B": ("Ni muy clara ni muy oscura, color promedio.", "4. Ni muy clara ni muy oscura, color promedio."),
             "C": ("Tu tono es raro, como sucio.", "4. Tu tono es raro, como sucio.")
         }
-        titulo, comentario = mapping[piel[0]]
+        titulo, comentario = mapping.get(piel[0], ("Respuesta inválida", "4. Respuesta inválida."))
         st.info(titulo)
         st.session_state.comentarios.append(comentario)
         st.session_state.step = 5
@@ -113,7 +111,9 @@ elif st.session_state.step == 5:
             st.text(f.read())
     else:
         st.error("No se encontró una recomendación adecuada. Revisá tus respuestas.")
+
     nombre_archivo = f"textos/{st.session_state.dni}.txt"
+    os.makedirs("textos", exist_ok=True)
     with open(nombre_archivo, "a", encoding="utf-8") as f:
         for c in st.session_state.comentarios:
             f.write(c + "\n")
