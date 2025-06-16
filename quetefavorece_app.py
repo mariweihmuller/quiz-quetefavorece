@@ -103,7 +103,7 @@ elif st.session_state.step == 4:
 elif st.session_state.step == 5:
     st.success(f"Tu puntaje total es: {st.session_state.contador}")
     st.markdown("---")
-    st.markdown("### Recomendación final de Chuda 🐼")
+    st.markdown("### Recomendación final de Chuda 😘")
     rutas = {200: "cuerpo_reloj.txt", 150: "cuerpo_pera.txt", 100: "cuerpo_rectangulo.txt", 50: "cuerpo_triángulo.txt"}
     reco = rutas.get(st.session_state.contador)
     if reco and os.path.exists(reco):
@@ -117,7 +117,9 @@ elif st.session_state.step == 5:
     with open(nombre_archivo, "a", encoding="utf-8") as f:
         for c in st.session_state.comentarios:
             f.write(c + "\n")
+
     st.markdown("---")
-    st.markdown("### Archivo con comentarios:")
+    st.markdown("### 💬 Comentarios sobre cada respuesta")
     st.text("\n".join(st.session_state.comentarios))
+
 
