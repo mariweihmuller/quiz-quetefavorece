@@ -19,14 +19,11 @@ if "contador" not in st.session_state:
 # Paso 0: Bienvenida y registro
 if st.session_state.step == 0:
     st.write("Por favor, ingresá tus datos para comenzar:")
-    nombre = st.text_input("¿Cómo es tu nombre?:", st.session_state.nombre)
-    dni = st.text_input("Ingrese su número de DNI sin puntos ni espacios:", st.session_state.dni)
+    st.session_state.nombre = st.text_input("¿Cómo es tu nombre?:", st.session_state.nombre)
+    st.session_state.dni    = st.text_input("Ingrese su número de DNI sin puntos ni espacios:", st.session_state.dni)
     if st.button("Iniciar quiz"):
-        if nombre.strip() and dni.strip():
-            st.session_state.nombre = nombre.strip()
-            st.session_state.dni = dni.strip()
+        if st.session_state.nombre.strip() and st.session_state.dni.strip():
             st.session_state.step = 1
-            st.experimental_rerun()
         else:
             st.error("Tenés que completar ambos campos para continuar.")
 
@@ -38,10 +35,9 @@ elif st.session_state.step == 1:
             st.session_state.comentarios.append("1. Tu altura es baja, ¿Sos mayor de edad? Pareces de 12.")
         elif "B" in altura:
             st.session_state.comentarios.append("1. No sos bajo, sos promedio... pero meh.")
-        elif "C" in altura:
+        else:
             st.session_state.comentarios.append("1. Sos muy alta, pareces una jirafa.")
         st.session_state.step = 2
-        st.experimental_rerun()
 
 # Paso 2: Pregunta peso
 elif st.session_state.step == 2:
@@ -51,10 +47,9 @@ elif st.session_state.step == 2:
             st.session_state.comentarios.append("2. Un poquito más de comida no te haría nada mal.")
         elif "B" in peso:
             st.session_state.comentarios.append("2. Tu peso es normalito...")
-        elif "C" in peso:
+        else:
             st.session_state.comentarios.append("2. Sos media grandota.")
         st.session_state.step = 3
-        st.experimental_rerun()
 
 # Paso 3: Pregunta tipo de cuerpo
 elif st.session_state.step == 3:
@@ -74,11 +69,10 @@ elif st.session_state.step == 3:
         elif "C" in cuerpo:
             st.session_state.comentarios.append("3. Al cuerpo rectángulo, tu tipo de cuerpo, le falta un poquito de forma.")
             st.session_state.contador += 100
-        elif "D" in cuerpo:
+        else:
             st.session_state.comentarios.append("3. Al cuerpo pera, tu tipo de cuerpo, le sobra cadera para tus hombritos.")
             st.session_state.contador += 150
         st.session_state.step = 4
-        st.experimental_rerun()
 
 # Paso 4: Pregunta tono de piel
 elif st.session_state.step == 4:
@@ -88,10 +82,9 @@ elif st.session_state.step == 4:
             st.session_state.comentarios.append("4. Sos muy blanca, pareces un fantasma.")
         elif "B" in piel:
             st.session_state.comentarios.append("4. Ni muy clara ni muy oscura, color promedio.")
-        elif "C" in piel:
+        else:
             st.session_state.comentarios.append("4. Tu tono es raro, como sucio.")
         st.session_state.step = 5
-        st.experimental_rerun()
 
 # Paso 5: Resultado final y archivo
 elif st.session_state.step == 5:
@@ -99,30 +92,26 @@ elif st.session_state.step == 5:
     st.markdown("---")
     st.markdown("### Recomendación final de Chuda 🐼")
 
-    # Definir archivo de recomendación según puntaje
-    if st.session_state.contador == 200:
-        archivo_reco = "cuerpo_reloj.txt"
-    elif st.session_state.contador == 150:
-        archivo_reco = "cuerpo_pera.txt"
-    elif st.session_state.contador == 100:
-        archivo_reco = "cuerpo_rectangulo.txt"
-    elif st.session_state.contador == 50:
-        archivo_reco = "cuerpo_triángulo.txt"
-    else:
-        archivo_reco = None
-
+    # Elegir archivo de recomendación
+    rutas = {
+        200: "cuerpo_reloj.txt",
+        150: "cuerpo_pera.txt",
+        100: "cuerpo_rectangulo.txt",
+        50:  "cuerpo_triángulo.txt"
+    }
+    archivo_reco = rutas.get(st.session_state.contador)
     if archivo_reco and os.path.exists(archivo_reco):
         with open(archivo_reco, "r", encoding="utf-8") as f:
             st.text(f.read())
     else:
         st.error("No se encontró una recomendación adecuada. Revisá tus respuestas.")
 
-    # Guardar archivo con comentarios
+    # Guardar el archivo de comentarios
     nombre_archivo = f"{st.session_state.dni}.txt"
     with open(nombre_archivo, "w", encoding="utf-8") as f:
         f.write(f"Hola {st.session_state.nombre}. Estos son algunos comentarios acerca de tus respuestas:\n")
-        for comentario in st.session_state.comentarios:
-            f.write(comentario + "\n")
+        for c in st.session_state.comentarios:
+            f.write(c + "\n")
 
     st.markdown("---")
     st.markdown("### Archivo con comentarios:")
