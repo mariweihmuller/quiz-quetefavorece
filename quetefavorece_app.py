@@ -126,3 +126,4 @@ elif st.session_state.inicio:
             st.markdown("---")
             st.markdown("### Archivo con comentarios:")
             st.text(f.read())
+
